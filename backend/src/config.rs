@@ -42,7 +42,8 @@ impl AppConfig {
                 .into_bytes(),
             tls_cert_path: env::var("TLS_CERT_PATH").ok(),
             tls_key_path: env::var("TLS_KEY_PATH").ok(),
-            grpc_port: env::var("GRPC_PORT")
+            grpc_port: env::var("PORT")
+                .or_else(|_| env::var("GRPC_PORT"))
                 .ok()
                 .and_then(|v| v.parse().ok())
                 .unwrap_or(50051),
