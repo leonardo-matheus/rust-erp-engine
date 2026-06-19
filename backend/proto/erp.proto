@@ -1,0 +1,236 @@
+syntax = "proto3";
+
+package techfix.erp;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+// ─── AUTH ───
+
+message LoginRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message LoginResponse {
+  string access_token = 1;
+  string refresh_token = 2;
+  int64 expires_in = 3;
+  string token_type = 4;
+}
+
+message RefreshRequest {
+  string refresh_token = 1;
+}
+
+message UserContext {
+  string user_id = 1;
+  string username = 2;
+  string role = 3;
+}
+
+// ─── PRODUCTS ───
+
+message Product {
+  string id = 1;
+  string name = 2;
+  string sku = 3;
+  string category = 4;
+  double price = 5;
+  double cost = 6;
+  uint32 stock = 7;
+  uint32 min_stock = 8;
+  google.protobuf.Timestamp created_at = 9;
+  google.protobuf.Timestamp updated_at = 10;
+}
+
+message CreateProductRequest {
+  string name = 1;
+  string sku = 2;
+  string category = 3;
+  double price = 4;
+  double cost = 5;
+  uint32 stock = 6;
+  uint32 min_stock = 7;
+}
+
+message UpdateProductRequest {
+  string id = 1;
+  string name = 2;
+  string sku = 3;
+  string category = 4;
+  double price = 5;
+  double cost = 6;
+  uint32 min_stock = 7;
+}
+
+message GetProductRequest {
+  string id = 1;
+}
+
+message DeleteProductRequest {
+  string id = 1;
+}
+
+message ListProductsRequest {
+  string search = 1;
+  string category = 2;
+  uint32 page = 3;
+  uint32 page_size = 4;
+}
+
+message ListProductsResponse {
+  repeated Product products = 1;
+  uint32 total = 2;
+}
+
+// ─── SALES ───
+
+message SaleItem {
+  string product_id = 1;
+  string product_name = 2;
+  uint32 quantity = 3;
+  double unit_price = 4;
+  double subtotal = 5;
+}
+
+message Sale {
+  string id = 1;
+  repeated SaleItem items = 2;
+  double total = 3;
+  string customer = 4;
+  string payment_method = 5;
+  google.protobuf.Timestamp created_at = 6;
+}
+
+message CreateSaleRequest {
+  repeated SaleItemRequest items = 1;
+  string customer = 2;
+  string payment_method = 3;
+}
+
+message SaleItemRequest {
+  string product_id = 1;
+  uint32 quantity = 2;
+}
+
+message ListSalesRequest {
+  string search = 1;
+  uint32 page = 2;
+  uint32 page_size = 3;
+}
+
+message ListSalesResponse {
+  repeated Sale sales = 1;
+  uint32 total = 2;
+}
+
+// ─── STOCK ───
+
+message StockMovement {
+  string id = 1;
+  string product_id = 2;
+  string product_name = 3;
+  uint32 quantity = 4;
+  string movement_type = 5; // IN or OUT
+  string notes = 6;
+  google.protobuf.Timestamp created_at = 7;
+}
+
+message RestockRequest {
+  string product_id = 1;
+  uint32 quantity = 2;
+  string notes = 3;
+}
+
+message ListMovementsRequest {
+  string product_id = 1;
+  uint32 page = 2;
+  uint32 page_size = 3;
+}
+
+message ListMovementsResponse {
+  repeated StockMovement movements = 1;
+  uint32 total = 2;
+}
+
+// ─── DASHBOARD ───
+
+message DashboardStats {
+  uint32 total_products = 1;
+  uint32 total_stock = 2;
+  uint32 low_stock = 3;
+  uint32 total_sales = 4;
+  double revenue = 5;
+  double estimated_profit = 6;
+}
+
+// ─── AUDIT ───
+
+message AuditEntry {
+  string id = 1;
+  string user_id = 2;
+  string action = 3;
+  string resource = 4;
+  string resource_id = 5;
+  string details = 6;
+  string ip_address = 7;
+  google.protobuf.Timestamp timestamp = 8;
+}
+
+message ListAuditRequest {
+  string user_id = 1;
+  string action = 2;
+  uint32 page = 3;
+  uint32 page_size = 4;
+}
+
+message ListAuditResponse {
+  repeated AuditEntry entries = 1;
+  uint32 total = 2;
+}
+
+// ─── HEALTH ───
+
+message HealthResponse {
+  string status = 1;
+  string version = 2;
+  google.protobuf.Timestamp uptime = 3;
+}
+
+// ─── SERVICES ───
+
+service AuthService {
+  rpc Login(LoginRequest) returns (LoginResponse);
+  rpc RefreshToken(RefreshRequest) returns (LoginResponse);
+}
+
+service ProductService {
+  rpc Create(CreateProductRequest) returns (Product);
+  rpc Get(GetProductRequest) returns (Product);
+  rpc Update(UpdateProductRequest) returns (Product);
+  rpc Delete(DeleteProductRequest) returns (google.protobuf.Empty);
+  rpc List(ListProductsRequest) returns (ListProductsResponse);
+}
+
+service SalesService {
+  rpc Create(CreateSaleRequest) returns (Sale);
+  rpc List(ListSalesRequest) returns (ListSalesResponse);
+}
+
+service StockService {
+  rpc Restock(RestockRequest) returns (StockMovement);
+  rpc ListMovements(ListMovementsRequest) returns (ListMovementsResponse);
+}
+
+service DashboardService {
+  rpc GetStats(google.protobuf.Empty) returns (DashboardStats);
+}
+
+service AuditService {
+  rpc List(ListAuditRequest) returns (ListAuditResponse);
+}
+
+service HealthService {
+  rpc Check(google.protobuf.Empty) returns (HealthResponse);
+}

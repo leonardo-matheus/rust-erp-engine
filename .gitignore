@@ -1,0 +1,28 @@
+# Rust
+backend/target/
+target/
+**/*.rs.bk
+
+# WASM build artifacts
+pkg/
+*.wasm
+
+# Database
+*.db
+*.db-shm
+*.db-wal
+
+# Secrets
+.env
+*.pem
+*.key
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo

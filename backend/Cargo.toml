@@ -1,0 +1,77 @@
+[package]
+name = "techfix-erp-backend"
+version = "1.0.0"
+edition = "2021"
+
+[lib]
+name = "techfix_erp_backend"
+path = "src/lib.rs"
+
+[[bin]]
+name = "server"
+path = "src/main.rs"
+
+[dependencies]
+# gRPC
+tonic = "0.12"
+tonic-web = "0.12"
+tonic-reflection = "0.12"
+prost = "0.13"
+prost-types = "0.13"
+
+# Async runtime
+tokio = { version = "1", features = ["full"] }
+
+# Database
+sqlx = { version = "0.8", features = ["runtime-tokio", "sqlite", "chrono", "uuid"] }
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# Auth & Security
+jsonwebtoken = "9"
+argon2 = "0.5"
+rand = "0.8"
+uuid = { version = "1", features = ["v4"] }
+chrono = { version = "0.4", features = ["serde"] }
+
+# TLS
+rustls = "0.23"
+rustls-pemfile = "2"
+tokio-rustls = "0.26"
+hyper = { version = "1", features = ["full"] }
+hyper-util = { version = "0.1", features = ["tokio"] }
+tower = "0.5"
+tower-http = { version = "0.6", features = ["cors", "compression-gzip", "trace", "limit"] }
+
+# Logging & Audit
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+tracing-appender = "0.2"
+
+# Rate limiting
+governor = "0.7"
+
+# Input validation
+validator = { version = "0.19", features = ["derive"] }
+
+# Encryption at rest
+aes-gcm = "0.10"
+base64 = "0.22"
+
+# Utils
+thiserror = "2"
+anyhow = "1"
+hex = "0.4"
+constant_time_eq = "0.3"
+regex = "1"
+once_cell = "1"
+sled = "0.34.7"
+async-trait = "0.1.89"
+
+[build-dependencies]
+tonic-build = "0.12"
+
+[dev-dependencies]
+tempfile = "3.27.0"
